@@ -126,4 +126,16 @@ public class ExpressionTest {
 		Expression e = new Expression("5 + 7 - 1");
 		Assert.assertEquals(11, e.evaluate());
 	}
+	
+	@Test
+	public void testModulus() throws Exception {
+		Expression e = new Expression("7 % 6");
+		Assert.assertEquals(1, e.evaluate());
+	}
+	
+	@Test
+	public void testModulus2() throws Exception {
+		Expression e = new Expression("7 % 7");
+		Assert.assertEquals(0, e.evaluate());
+	}
 }
