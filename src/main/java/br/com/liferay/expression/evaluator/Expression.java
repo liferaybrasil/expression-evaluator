@@ -174,6 +174,9 @@ public class Expression {
 			operators.pop();
 			addOperator("<=");
 		}
+		else if(character == '=' && lastChar == '=') {
+			processOperator("==");
+		}
 		else if(character == '&' && lastChar == '&') {
 			processOperator("&&");
 		}

@@ -7,6 +7,7 @@ import br.com.liferay.expression.evaluator.operator.arithmetic.ModulusOperator;
 import br.com.liferay.expression.evaluator.operator.arithmetic.MultiplicationOperator;
 import br.com.liferay.expression.evaluator.operator.conditional.AndOperator;
 import br.com.liferay.expression.evaluator.operator.conditional.OrOperator;
+import br.com.liferay.expression.evaluator.operator.relational.EqualityOperator;
 import br.com.liferay.expression.evaluator.operator.relational.GreaterThanEqualOperator;
 import br.com.liferay.expression.evaluator.operator.relational.GreaterThanOperator;
 import br.com.liferay.expression.evaluator.operator.relational.LessThanEqualOperator;
@@ -42,6 +43,8 @@ public class Operator implements Comparable<Operator> {
 			return new LessThanOperator(text);
 		case "<=":
 			return new LessThanEqualOperator(text);	
+		case "==":
+			return new EqualityOperator(text);	
 		case "&&":
 			return new AndOperator(text);
 		case "||":

@@ -114,6 +114,9 @@ public abstract class ArithmeticRelationalOperator extends Operator {
 		else if(clazz.equals(String.class)) {
 			return value.toString();
 		}
+		else if(clazz.equals(Boolean.class)) {
+			return Boolean.parseBoolean(value.toString());
+		}
 		return new BigDecimal(value.toString());
 	}
 	

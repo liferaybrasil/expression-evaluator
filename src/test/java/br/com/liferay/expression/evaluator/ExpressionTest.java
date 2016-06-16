@@ -264,4 +264,22 @@ public class ExpressionTest {
 		Expression e = new Expression("!(4 > 3 && 3 >= 4)");
 		Assert.assertEquals(true, e.evaluate());
 	}
+	
+	@Test
+	public void testEquality() throws Exception {
+		Expression e = new Expression("4 == 4");
+		Assert.assertEquals(true, e.evaluate());
+	}
+	
+	@Test
+	public void testEquality2() throws Exception {
+		Expression e = new Expression("2 > 3 == 5 <= 7");
+		Assert.assertEquals(false, e.evaluate());
+	}
+	
+	@Test
+	public void testEquality3() throws Exception {
+		Expression e = new Expression("5 > 4 == 9 >= 7");
+		Assert.assertEquals(true, e.evaluate());
+	}
 }
