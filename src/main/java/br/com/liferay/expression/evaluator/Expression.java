@@ -1,14 +1,13 @@
 package br.com.liferay.expression.evaluator;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Stack;
 
 import org.apache.commons.lang3.CharUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import br.com.liferay.expression.evaluator.operand.Operand;
-import br.com.liferay.expression.evaluator.operand.StringOperand;
 import br.com.liferay.expression.evaluator.operator.FunctionOperator;
 import br.com.liferay.expression.evaluator.operator.Operator;
 import br.com.liferay.expression.evaluator.operator.ParenthesisOperator;
@@ -18,10 +17,10 @@ import br.com.liferay.expression.evaluator.operator.ParenthesisOperator;
  */
 public class Expression {
 
-	Expression(String expression, Set<String> variables) {
+	Expression(String expression, Map<String, Object> variables) {
 		this.expression = expression;
 		if(variables != null) {
-			this.variables.addAll(variables);
+			this.variables.putAll(variables);
 		}
 		
 		if(StringUtils.isBlank(expression)) {
@@ -96,8 +95,8 @@ public class Expression {
 	}
 	
 	protected Operand createOperand(String operandText) {
-		if(variables.contains(operandText)) {
-			return new StringOperand(operandText, true);
+		if(variables.containsKey(operandText)) {
+			return Operand.create(variables.get(operandText).toString());
 		}
 		
 		return Operand.create(operandText);
@@ -274,5 +273,5 @@ public class Expression {
 	private int lastToken = 0;
 	private Stack<Operand> operands = new Stack<>();
 	private Stack<Operator> operators = new Stack<>();
-	private Set<String> variables = new HashSet<>();
+	private Map<String,Object> variables = new HashMap<>();
 }

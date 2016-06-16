@@ -1,5 +1,8 @@
 package br.com.liferay.expression.evaluator;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -305,5 +308,22 @@ public class ExpressionTest {
 	public void testNotEquals3() throws Exception {
 		Expression e = new ExpressionBuilder().expression("\"hello\" != \"world\"").buildExpression();
 		Assert.assertEquals(true, e.evaluate());
+	}
+	
+	@Test
+	public void testVariables() throws Exception {
+		Map<String,Object> variables = new HashMap<>();
+		variables.put("a", 1);
+		variables.put("b", 5);
+		Expression e = new ExpressionBuilder().expression("a + b").variables(variables).buildExpression();
+		Assert.assertEquals(6, e.evaluate());
+	}
+	
+	@Test
+	public void testVariables2() throws Exception {
+		Map<String,Object> variables = new HashMap<>();
+		variables.put("a", 2);
+		Expression e = new ExpressionBuilder().expression("a * 7").variables(variables).buildExpression();
+		Assert.assertEquals(14, e.evaluate());
 	}
 }

@@ -1,7 +1,7 @@
 package br.com.liferay.expression.evaluator;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Leonardo Barros
@@ -13,9 +13,9 @@ public class ExpressionBuilder {
 		return this;
 	}
 	
-	public ExpressionBuilder variables(Set<String> variables) {
+	public ExpressionBuilder variables(Map<String, Object> variables) {
 		if(variables != null) {
-			variables.addAll(variables);
+			this.variables.putAll(variables);
 		}
 		return this;
 	}
@@ -25,5 +25,5 @@ public class ExpressionBuilder {
 	}
 	
 	private String expression;
-	private Set<String> variables = new HashSet<>();
+	private Map<String, Object> variables = new HashMap<>();
 }
