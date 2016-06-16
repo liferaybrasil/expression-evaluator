@@ -210,4 +210,22 @@ public class ExpressionTest {
 		Expression e = new Expression("7 <= 8");
 		Assert.assertEquals(true, e.evaluate());
 	}
+	
+	@Test
+	public void testAnd() throws Exception {
+		Expression e = new Expression("4 > 3 && 3 >= 2");
+		Assert.assertEquals(true, e.evaluate());
+	}
+	
+	@Test
+	public void testAnd2() throws Exception {
+		Expression e = new Expression("2 > 3 && 3 >= 2");
+		Assert.assertEquals(false, e.evaluate());
+	}
+	
+	@Test
+	public void testAnd3() throws Exception {
+		Expression e = new Expression("4 > 3 && 3 >= 4");
+		Assert.assertEquals(false, e.evaluate());
+	}
 }

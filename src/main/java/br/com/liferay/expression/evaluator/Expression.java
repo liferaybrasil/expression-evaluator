@@ -174,8 +174,17 @@ public class Expression {
 			operators.pop();
 			addOperator("<=");
 		}
+		else if(character == '&' && lastChar == '&') {
+			processOperator("&&");
+		}
 		else if(character == '+' || character == '-' || character == '*' || character == '/' || character == '%' || character == '>' || character == '<') {
 			processOperator(String.valueOf(character));
+		}
+		else if(lastChar == '&' && character != '&') {
+			throw new ExpressionException("The conditional operator is '&&'");
+		}
+		else if(character == '=' || character == '&' || character == '|') {
+			lastChar = character;
 		}
 		else if(character == '(') {
 			processOpeningParenthesis();
