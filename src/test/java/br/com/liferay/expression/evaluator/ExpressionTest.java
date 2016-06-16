@@ -228,4 +228,28 @@ public class ExpressionTest {
 		Expression e = new Expression("4 > 3 && 3 >= 4");
 		Assert.assertEquals(false, e.evaluate());
 	}
+	
+	@Test
+	public void testOr() throws Exception {
+		Expression e = new Expression("5 > 3 || 2 <= 4");
+		Assert.assertEquals(true, e.evaluate());
+	}
+	
+	@Test
+	public void testOr2() throws Exception {
+		Expression e = new Expression("6 > 3 || 2 >= 4");
+		Assert.assertEquals(true, e.evaluate());
+	}
+	
+	@Test
+	public void testOr3() throws Exception {
+		Expression e = new Expression("6 <= 3 || 7 > 5");
+		Assert.assertEquals(true, e.evaluate());
+	}
+	
+	@Test
+	public void testOr4() throws Exception {
+		Expression e = new Expression("6 <= 3 || 9 >= 11");
+		Assert.assertEquals(false, e.evaluate());
+	}
 }

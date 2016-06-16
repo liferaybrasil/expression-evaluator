@@ -177,11 +177,17 @@ public class Expression {
 		else if(character == '&' && lastChar == '&') {
 			processOperator("&&");
 		}
+		else if(character == '|' && lastChar == '|') {
+			processOperator("||");
+		}
 		else if(character == '+' || character == '-' || character == '*' || character == '/' || character == '%' || character == '>' || character == '<') {
 			processOperator(String.valueOf(character));
 		}
 		else if(lastChar == '&' && character != '&') {
 			throw new ExpressionException("The conditional operator is '&&'");
+		}
+		else if(lastChar == '|' && character != '|') {
+			throw new ExpressionException("The conditional operator is '||'");
 		}
 		else if(character == '=' || character == '&' || character == '|') {
 			lastChar = character;
