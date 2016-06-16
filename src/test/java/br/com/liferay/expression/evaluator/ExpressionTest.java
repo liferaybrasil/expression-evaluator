@@ -30,4 +30,28 @@ public class ExpressionTest {
 		Expression expression2 = new Expression("3 + 1");
 		Assert.assertEquals(expression.evaluate(), expression2.evaluate());
 	}
+	
+	@Test
+	public void testAddition3() throws Exception {
+		Expression expression = new Expression("2 + 5 + 7");
+		Assert.assertEquals(14, expression.evaluate());
+	}
+	
+	@Test
+	public void testSubtraction() throws ExpressionException {
+		Expression e = new Expression("5 - 4");
+		Assert.assertEquals(1, e.evaluate());
+	}
+	
+	@Test
+	public void testSubtraction2() throws ExpressionException {
+		Expression e = new Expression("10 - 4 - 9");
+		Assert.assertEquals(-3, e.evaluate());
+	}
+	
+	@Test
+	public void testSubtraction3() throws ExpressionException {
+		Expression e = new Expression("3 - 6");
+		Assert.assertEquals(-3, e.evaluate());
+	}
 }

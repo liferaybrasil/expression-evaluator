@@ -113,7 +113,7 @@ public class Expression {
 		if(CharUtils.isAsciiAlphanumeric(character) || character == '.') {
 			addCharacter(character);
 		}
-		else if(character == '+') {
+		else if(character == '+' || character == '-') {
 			processOperator(String.valueOf(character));
 		}
 		else {

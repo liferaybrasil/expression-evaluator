@@ -17,6 +17,8 @@ public class Operator implements Comparable<Operator> {
 		switch(text) {
 		case "+":
 			return new AdditionOperator(text);
+		case "-":
+			return new AdditionOperator(text, true);	
 		}
 		
 		return null;
