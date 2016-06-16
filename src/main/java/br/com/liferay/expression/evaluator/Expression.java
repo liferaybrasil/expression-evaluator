@@ -170,6 +170,10 @@ public class Expression {
 			operators.pop();
 			addOperator(">=");
 		}
+		else if(character == '=' && lastChar == '<') {
+			operators.pop();
+			addOperator("<=");
+		}
 		else if(character == '+' || character == '-' || character == '*' || character == '/' || character == '%' || character == '>' || character == '<') {
 			processOperator(String.valueOf(character));
 		}
