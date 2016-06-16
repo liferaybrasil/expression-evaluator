@@ -25,6 +25,7 @@ public class NotEqualsOperator extends ArithmeticRelationalOperator {
 		map.put(BigInteger.class, OPERATION);
 		map.put(BigDecimal.class, OPERATION);
 		map.put(Boolean.class, OPERATION);
+		map.put(String.class, OPERATION);
 	}
 
 	public NotEqualsOperator(String text) {

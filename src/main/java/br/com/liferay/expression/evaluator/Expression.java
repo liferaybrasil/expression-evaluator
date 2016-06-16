@@ -30,6 +30,10 @@ public class Expression {
 		try {
 			for(int i = 0; i < expression.length(); i++) {
 				char character = expression.charAt(i);
+				if(character == '\"') {
+					i = processString(i, expression);
+					continue;
+				}
 				processCharacter(character);
 			}
 			
@@ -156,6 +160,20 @@ public class Expression {
 			}
 		}
 		addOperator("(");
+	}
+	
+	protected int processString(int currendIndex, CharSequence expression) throws ExpressionException {
+		int nextIndex = StringUtils.indexOf(expression, '\"', currendIndex);
+		
+		if(nextIndex == -1) {
+			throw new ExpressionException("An invalid String constant was found.");
+		}
+		
+		String stringOperand = StringUtils.substring(expression.toString(), currendIndex + 1, nextIndex);
+		
+		currentToken.append(stringOperand);
+		
+		return nextIndex;
 	}
 	
 	protected void processCharacter(char character) throws ExpressionException {

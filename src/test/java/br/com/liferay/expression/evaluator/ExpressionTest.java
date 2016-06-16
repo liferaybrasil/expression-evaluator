@@ -284,6 +284,12 @@ public class ExpressionTest {
 	}
 	
 	@Test
+	public void testEquality4() throws Exception {
+		Expression e = new Expression("\"hello\" == \"hello\"");
+		Assert.assertEquals(true, e.evaluate());
+	}
+	
+	@Test
 	public void testNotEquals() throws Exception {
 		Expression e = new Expression("2 > 3 != 5 <= 7");
 		Assert.assertEquals(true, e.evaluate());
@@ -293,5 +299,11 @@ public class ExpressionTest {
 	public void testNotEquals2() throws Exception {
 		Expression e = new Expression("5 > 4 != 9 >= 7");
 		Assert.assertEquals(false, e.evaluate());
+	}
+	
+	@Test
+	public void testNotEquals3() throws Exception {
+		Expression e = new Expression("\"hello\" != \"world\"");
+		Assert.assertEquals(true, e.evaluate());
 	}
 }
