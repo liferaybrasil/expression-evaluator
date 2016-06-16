@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 
+import br.com.liferay.expression.evaluator.operator.ArithmeticRelationalOperator;
 import br.com.liferay.expression.evaluator.operator.BinaryInterface;
 
 /**

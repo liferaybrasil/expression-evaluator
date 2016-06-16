@@ -138,4 +138,22 @@ public class ExpressionTest {
 		Expression e = new Expression("7 % 7");
 		Assert.assertEquals(0, e.evaluate());
 	}
+	
+	@Test
+	public void testGreaterThan() throws Exception {
+		Expression e = new Expression("3 > 2");
+		Assert.assertEquals(true, e.evaluate());
+	}
+	
+	@Test
+	public void testGreaterThan2() throws Exception {
+		Expression e = new Expression("3 > 3");
+		Assert.assertEquals(false, e.evaluate());
+	}
+	
+	@Test
+	public void testGreaterThan3() throws Exception {
+		Expression e = new Expression("1 > 3");
+		Assert.assertEquals(false, e.evaluate());
+	}
 }

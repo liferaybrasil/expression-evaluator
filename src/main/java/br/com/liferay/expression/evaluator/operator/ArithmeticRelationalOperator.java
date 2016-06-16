@@ -1,12 +1,10 @@
-package br.com.liferay.expression.evaluator.operator.arithmetic;
+package br.com.liferay.expression.evaluator.operator;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Map;
 
 import br.com.liferay.expression.evaluator.operand.Operand;
-import br.com.liferay.expression.evaluator.operator.BinaryInterface;
-import br.com.liferay.expression.evaluator.operator.Operator;
 
 /**
  * @author Leonardo Barros
