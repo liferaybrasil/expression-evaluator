@@ -8,6 +8,7 @@ import org.apache.commons.lang3.CharUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import br.com.liferay.expression.evaluator.operand.Operand;
+import br.com.liferay.expression.evaluator.operator.FunctionOperator;
 import br.com.liferay.expression.evaluator.operator.Operator;
 import br.com.liferay.expression.evaluator.operator.ParenthesisOperator;
 
@@ -105,6 +106,58 @@ public class Expression {
 		operands.push(operand);	
 	}
 	
+	protected String extractFunctionName() {
+		String str = currentToken.toString();
+		
+		for(String func : SUPPORTED_FUNCTIONS) {
+			if(str.contains(func)) {
+				currentToken.delete(0, currentToken.length());
+				if(str.indexOf('.') != -1) {
+					currentToken.append(str.substring(0, str.indexOf('.')));
+					addOperand();
+				}
+				return func;
+			}
+		}
+		
+		currentToken.delete(0, currentToken.length());
+		
+		return null;
+	}
+	
+	protected void processClosingParenthesis() throws ExpressionException {
+		addOperand();
+		
+		while(!(operators.peek() instanceof ParenthesisOperator)) {
+			
+			evaluate(operators.pop());
+			
+			if(operators.isEmpty()) {
+				throw new ExpressionException("It wasn't found an opening parenthesis");
+			}
+		}
+		
+		operators.pop();
+		
+		if(!operators.isEmpty() && operators.peek() instanceof FunctionOperator) {
+			evaluate(operators.pop());
+		}
+	}
+	
+	protected void processOpeningParenthesis() throws ExpressionException {
+		if(currentToken.length() > 0) {
+			String foundFunction = extractFunctionName();
+			
+			if(foundFunction != null) {
+				addOperator(foundFunction);
+			}
+			else if(lastChar != '-') {
+				throw new ExpressionException("Operator '(' not expected.");
+			}
+		}
+		addOperator("(");
+	}
+	
 	protected void processCharacter(char character) throws ExpressionException {
 		if(character == ' ') {
 			return;
@@ -113,8 +166,14 @@ public class Expression {
 		if(CharUtils.isAsciiAlphanumeric(character) || character == '.') {
 			addCharacter(character);
 		}
-		else if(character == '+' || character == '-') {
+		else if(character == '+' || character == '-' || character == '*') {
 			processOperator(String.valueOf(character));
+		}
+		else if(character == '(') {
+			processOpeningParenthesis();
+		}
+		else if(character == ')') {
+			processClosingParenthesis();
 		}
 		else {
 			throw new ExpressionException("Invalid token found: " + character);
@@ -149,7 +208,8 @@ public class Expression {
 			operators.push(lastOperator);
 		}
 	}
-	
+
+	private static final String[] SUPPORTED_FUNCTIONS = new String[] {};
 	private static final int TOKEN_OPERATOR = 1;
 	private static final int TOKEN_OPERAND = 2;
 	private StringBuilder currentToken = new StringBuilder();

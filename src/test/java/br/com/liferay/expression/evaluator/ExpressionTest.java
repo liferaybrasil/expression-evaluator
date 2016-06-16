@@ -38,20 +38,50 @@ public class ExpressionTest {
 	}
 	
 	@Test
-	public void testSubtraction() throws ExpressionException {
+	public void testSubtraction() throws Exception {
 		Expression e = new Expression("5 - 4");
 		Assert.assertEquals(1, e.evaluate());
 	}
 	
 	@Test
-	public void testSubtraction2() throws ExpressionException {
+	public void testSubtraction2() throws Exception {
 		Expression e = new Expression("10 - 4 - 9");
 		Assert.assertEquals(-3, e.evaluate());
 	}
 	
 	@Test
-	public void testSubtraction3() throws ExpressionException {
+	public void testSubtraction3() throws Exception {
 		Expression e = new Expression("3 - 6");
 		Assert.assertEquals(-3, e.evaluate());
+	}
+	
+	@Test
+	public void testMultiplication() throws Exception {
+		Expression e = new Expression("2 * 3");
+		Assert.assertEquals(6, e.evaluate());
+	}
+	
+	@Test
+	public void testMultiplication2() throws Exception {
+		Expression e = new Expression("2 * (-3)");
+		Assert.assertEquals(-6, e.evaluate());
+	}
+	
+	@Test
+	public void testMultiplication3() throws Exception {
+		Expression e = new Expression("4 * 2 * 3");
+		Assert.assertEquals(24, e.evaluate());
+	}
+	
+	@Test
+	public void testMultiplication4() throws Exception {
+		Expression e = new Expression("2.5 * 4");
+		Assert.assertEquals(new Float(10), e.evaluate());
+	}
+	
+	@Test
+	public void testMultiplication5() throws Exception {
+		Expression e = new Expression("2.5d * 4");
+		Assert.assertEquals(new Double(10), e.evaluate());
 	}
 }
