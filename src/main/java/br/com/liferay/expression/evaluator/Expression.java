@@ -180,9 +180,6 @@ public class Expression {
 		else if(character == '|' && lastChar == '|') {
 			processOperator("||");
 		}
-		else if(character == '+' || character == '-' || character == '*' || character == '/' || character == '%' || character == '>' || character == '<') {
-			processOperator(String.valueOf(character));
-		}
 		else if(lastChar == '&' && character != '&') {
 			throw new ExpressionException("The conditional operator is '&&'");
 		}
@@ -191,6 +188,13 @@ public class Expression {
 		}
 		else if(character == '=' || character == '&' || character == '|') {
 			lastChar = character;
+		}
+		else if(character == '!') {
+			addOperand();
+			addOperator("!");
+		}
+		else if(character == '+' || character == '-' || character == '*' || character == '/' || character == '%' || character == '>' || character == '<') {
+			processOperator(String.valueOf(character));
 		}
 		else if(character == '(') {
 			processOpeningParenthesis();

@@ -46,6 +46,8 @@ public class Operator implements Comparable<Operator> {
 			return new AndOperator(text);
 		case "||":
 			return new OrOperator(text);
+		case "!":
+			return new NegationOperator(text);
 		case "(":
 			return new ParenthesisOperator(text);	
 		}

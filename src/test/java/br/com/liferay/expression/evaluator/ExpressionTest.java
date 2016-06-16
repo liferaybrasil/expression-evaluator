@@ -252,4 +252,16 @@ public class ExpressionTest {
 		Expression e = new Expression("6 <= 3 || 9 >= 11");
 		Assert.assertEquals(false, e.evaluate());
 	}
+	
+	@Test
+	public void testNegation() throws Exception {
+		Expression e = new Expression("!(6 <= 3 || 9 >= 11)");
+		Assert.assertEquals(true, e.evaluate());
+	}
+	
+	@Test
+	public void testNegation2() throws Exception {
+		Expression e = new Expression("!(4 > 3 && 3 >= 4)");
+		Assert.assertEquals(true, e.evaluate());
+	}
 }
