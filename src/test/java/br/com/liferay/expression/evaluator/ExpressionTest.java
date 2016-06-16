@@ -84,4 +84,46 @@ public class ExpressionTest {
 		Expression e = new Expression("2.5d * 4");
 		Assert.assertEquals(new Double(10), e.evaluate());
 	}
+	
+	@Test
+	public void testDivision() throws Exception {
+		Expression e = new Expression("6 / 2");
+		Assert.assertEquals(3, e.evaluate());
+	}
+	
+	@Test
+	public void testDivision2() throws Exception {
+		Expression e = new Expression("7 / 6");
+		Assert.assertEquals(1, e.evaluate());
+	}
+	
+	@Test
+	public void testDivision3() throws Exception {
+		Expression e = new Expression("10.0 / 4");
+		Assert.assertEquals(new Float(2.5), e.evaluate());
+	}
+	
+	@Test
+	public void testPrecedence() throws Exception {
+		Expression e = new Expression("2 + 3 * 4");
+		Assert.assertEquals(14, e.evaluate());
+	}
+	
+	@Test
+	public void testPrecedence2() throws Exception {
+		Expression e = new Expression("4 - 8 / 2");
+		Assert.assertEquals(0, e.evaluate());
+	}
+	
+	@Test
+	public void testPrecedence3() throws Exception {
+		Expression e = new Expression("3 * 8 / 2");
+		Assert.assertEquals(12, e.evaluate());
+	}
+	
+	@Test
+	public void testPrecedence4() throws Exception {
+		Expression e = new Expression("5 + 7 - 1");
+		Assert.assertEquals(11, e.evaluate());
+	}
 }

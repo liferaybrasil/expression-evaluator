@@ -2,6 +2,7 @@ package br.com.liferay.expression.evaluator.operator;
 
 import br.com.liferay.expression.evaluator.operand.Operand;
 import br.com.liferay.expression.evaluator.operator.arithmetic.AdditionOperator;
+import br.com.liferay.expression.evaluator.operator.arithmetic.DivisionOperator;
 import br.com.liferay.expression.evaluator.operator.arithmetic.MultiplicationOperator;
 
 /**
@@ -22,6 +23,8 @@ public class Operator implements Comparable<Operator> {
 			return new AdditionOperator(text, true);	
 		case "*":
 			return new MultiplicationOperator(text);
+		case "/":
+			return new DivisionOperator(text);
 		case "(":
 			return new ParenthesisOperator(text);	
 		}
