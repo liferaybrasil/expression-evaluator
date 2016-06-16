@@ -12,6 +12,7 @@ import br.com.liferay.expression.evaluator.operator.relational.GreaterThanEqualO
 import br.com.liferay.expression.evaluator.operator.relational.GreaterThanOperator;
 import br.com.liferay.expression.evaluator.operator.relational.LessThanEqualOperator;
 import br.com.liferay.expression.evaluator.operator.relational.LessThanOperator;
+import br.com.liferay.expression.evaluator.operator.relational.NotEqualsOperator;
 
 /**
  * @author Leonardo Barros
@@ -45,6 +46,8 @@ public class Operator implements Comparable<Operator> {
 			return new LessThanEqualOperator(text);	
 		case "==":
 			return new EqualityOperator(text);	
+		case "!=":
+			return new NotEqualsOperator(text);	
 		case "&&":
 			return new AndOperator(text);
 		case "||":

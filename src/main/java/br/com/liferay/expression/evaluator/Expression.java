@@ -177,6 +177,10 @@ public class Expression {
 		else if(character == '=' && lastChar == '=') {
 			processOperator("==");
 		}
+		else if(character == '=' && lastChar == '!') {
+			operators.pop();
+			addOperator("!=");
+		}
 		else if(character == '&' && lastChar == '&') {
 			processOperator("&&");
 		}

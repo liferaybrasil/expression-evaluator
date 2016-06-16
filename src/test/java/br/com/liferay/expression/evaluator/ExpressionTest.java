@@ -282,4 +282,16 @@ public class ExpressionTest {
 		Expression e = new Expression("5 > 4 == 9 >= 7");
 		Assert.assertEquals(true, e.evaluate());
 	}
+	
+	@Test
+	public void testNotEquals() throws Exception {
+		Expression e = new Expression("2 > 3 != 5 <= 7");
+		Assert.assertEquals(true, e.evaluate());
+	}
+	
+	@Test
+	public void testNotEquals2() throws Exception {
+		Expression e = new Expression("5 > 4 != 9 >= 7");
+		Assert.assertEquals(false, e.evaluate());
+	}
 }
