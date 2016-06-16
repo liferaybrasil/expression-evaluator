@@ -174,4 +174,22 @@ public class ExpressionTest {
 		Expression e = new Expression("4 >= 5");
 		Assert.assertEquals(false, e.evaluate());
 	}
+	
+	@Test
+	public void testLessThan() throws Exception {
+		Expression e = new Expression("6 < 7");
+		Assert.assertEquals(true, e.evaluate());
+	}
+	
+	@Test
+	public void testLessThan2() throws Exception {
+		Expression e = new Expression("6 < 6");
+		Assert.assertEquals(false, e.evaluate());
+	}
+	
+	@Test
+	public void testLessThan3() throws Exception {
+		Expression e = new Expression("7 < 6");
+		Assert.assertEquals(false, e.evaluate());
+	}
 }

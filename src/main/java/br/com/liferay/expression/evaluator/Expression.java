@@ -170,7 +170,7 @@ public class Expression {
 			operators.pop();
 			addOperator(">=");
 		}
-		else if(character == '+' || character == '-' || character == '*' || character == '/' || character == '%' || character == '>') {
+		else if(character == '+' || character == '-' || character == '*' || character == '/' || character == '%' || character == '>' || character == '<') {
 			processOperator(String.valueOf(character));
 		}
 		else if(character == '(') {
