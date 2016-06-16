@@ -166,6 +166,10 @@ public class Expression {
 		if(CharUtils.isAsciiAlphanumeric(character) || character == '.') {
 			addCharacter(character);
 		}
+		else if(character == '=' && lastChar == '>') {
+			operators.pop();
+			addOperator(">=");
+		}
 		else if(character == '+' || character == '-' || character == '*' || character == '/' || character == '%' || character == '>') {
 			processOperator(String.valueOf(character));
 		}

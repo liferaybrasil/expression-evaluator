@@ -156,4 +156,22 @@ public class ExpressionTest {
 		Expression e = new Expression("1 > 3");
 		Assert.assertEquals(false, e.evaluate());
 	}
+	
+	@Test
+	public void testGreaterThanEqual() throws Exception {
+		Expression e = new Expression("5 >= 5");
+		Assert.assertEquals(true, e.evaluate());
+	}
+	
+	@Test
+	public void testGreaterThanEqual2() throws Exception {
+		Expression e = new Expression("6 >= 5");
+		Assert.assertEquals(true, e.evaluate());
+	}
+	
+	@Test
+	public void testGreaterThanEqual3() throws Exception {
+		Expression e = new Expression("4 >= 5");
+		Assert.assertEquals(false, e.evaluate());
+	}
 }

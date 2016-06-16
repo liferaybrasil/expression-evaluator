@@ -5,6 +5,7 @@ import br.com.liferay.expression.evaluator.operator.arithmetic.AdditionOperator;
 import br.com.liferay.expression.evaluator.operator.arithmetic.DivisionOperator;
 import br.com.liferay.expression.evaluator.operator.arithmetic.ModulusOperator;
 import br.com.liferay.expression.evaluator.operator.arithmetic.MultiplicationOperator;
+import br.com.liferay.expression.evaluator.operator.relational.GreaterThanEqualOperator;
 import br.com.liferay.expression.evaluator.operator.relational.GreaterThanOperator;
 
 /**
@@ -31,6 +32,8 @@ public class Operator implements Comparable<Operator> {
 			return new ModulusOperator(text);
 		case ">":
 			return new GreaterThanOperator(text);
+		case ">=":
+			return new GreaterThanEqualOperator(text);
 		case "(":
 			return new ParenthesisOperator(text);	
 		}
