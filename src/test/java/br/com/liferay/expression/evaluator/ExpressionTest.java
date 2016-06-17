@@ -6,6 +6,9 @@ import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
 
+import br.com.liferay.expression.evaluator.function.BinaryFunction;
+import br.com.liferay.expression.evaluator.function.Function;
+
 /**
  * @author Leonardo Barros
  */
@@ -325,5 +328,28 @@ public class ExpressionTest {
 		variables.put("a", 2);
 		Expression e = new ExpressionBuilder().expression("a * 7").variables(variables).buildExpression();
 		Assert.assertEquals(14, e.evaluate());
+	}
+	
+	@Test
+	public void testContainsFunction() throws Exception {
+		Map<String,Object> variables = new HashMap<>();
+		variables.put("field0", "hello world");
+		variables.put("field1", "hello");
+		
+		Function containsFunctions = new BinaryFunction() {
+			
+			@Override
+			public Object evaluate(Object param1, Object param2) {
+				String str1 = param1.toString();
+				String str2 = param2.toString();
+				return str1.contains(str2);
+			}
+		};
+		
+		Map<String,Function> functions = new HashMap<>();
+		functions.put("contains", containsFunctions);
+		
+		Expression e = new ExpressionBuilder().expression("contains(field0,field1)").functions(functions).variables(variables).buildExpression();
+		Assert.assertEquals(true, e.evaluate());
 	}
 }
