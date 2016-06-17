@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import br.com.liferay.expression.evaluator.function.BinaryFunction;
 import br.com.liferay.expression.evaluator.function.Function;
+import br.com.liferay.expression.evaluator.function.TernaryFunction;
 
 /**
  * @author Leonardo Barros
@@ -359,7 +360,7 @@ public class ExpressionTest {
 		variables.put("field0", "hello");
 		variables.put("field1", "world");
 		
-		Function containsFunctions = new BinaryFunction() {
+		Function concatFunction = new BinaryFunction() {
 			
 			@Override
 			public Object evaluate(Object param1, Object param2) {
@@ -370,7 +371,7 @@ public class ExpressionTest {
 		};
 		
 		Map<String,Function> functions = new HashMap<>();
-		functions.put("concat", containsFunctions);
+		functions.put("concat", concatFunction);
 		
 		Expression e = new ExpressionBuilder().expression("concat(field0, field1)").functions(functions).variables(variables).buildExpression();
 		Assert.assertEquals("hello world", e.evaluate());
@@ -382,7 +383,7 @@ public class ExpressionTest {
 		variables.put("field0", "hello");
 		variables.put("field1", "world");
 		
-		Function containsFunctions = new BinaryFunction() {
+		Function concatFunction = new BinaryFunction() {
 			
 			@Override
 			public Object evaluate(Object param1, Object param2) {
@@ -393,9 +394,29 @@ public class ExpressionTest {
 		};
 		
 		Map<String,Function> functions = new HashMap<>();
-		functions.put("concat", containsFunctions);
+		functions.put("concat", concatFunction);
 		
 		Expression e = new ExpressionBuilder().expression("concat(field0,concat(\" \", field1))").functions(functions).variables(variables).buildExpression();
 		Assert.assertEquals("hello world", e.evaluate());
+	}
+	
+	@Test
+	public void testBetweenFunction() throws Exception {
+		Function betweenFunction = new TernaryFunction() {
+			
+			@Override
+			public Object evaluate(Object param1, Object param2, Object param3) {
+				Integer val1 = Integer.valueOf(param1.toString());
+				Integer val2 = Integer.valueOf(param2.toString());
+				Integer val3 = Integer.valueOf(param3.toString());
+				return val1 >= val2 && val1 <= val3;
+			}
+		};
+		
+		Map<String,Function> functions = new HashMap<>();
+		functions.put("between", betweenFunction);
+		
+		Expression e = new ExpressionBuilder().expression("between(5,(2+1),(4+3))").functions(functions).buildExpression();
+		Assert.assertEquals(true, e.evaluate());
 	}
 }
