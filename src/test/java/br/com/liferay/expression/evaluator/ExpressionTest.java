@@ -9,6 +9,7 @@ import org.junit.Test;
 import br.com.liferay.expression.evaluator.function.BinaryFunction;
 import br.com.liferay.expression.evaluator.function.Function;
 import br.com.liferay.expression.evaluator.function.TernaryFunction;
+import br.com.liferay.expression.evaluator.function.UnaryFunction;
 
 /**
  * @author Leonardo Barros
@@ -417,6 +418,40 @@ public class ExpressionTest {
 		functions.put("between", betweenFunction);
 		
 		Expression e = new ExpressionBuilder().expression("between(5,(2+1),(4+3))").functions(functions).buildExpression();
+		Assert.assertEquals(true, e.evaluate());
+	}
+	
+	@Test
+	public void testNotFunction() throws Exception {
+		Function notFunction = new UnaryFunction() {
+			
+			@Override
+			public Object evaluate(Object param1) {
+				return !Boolean.valueOf(param1.toString());
+			}
+		};
+		
+		Map<String,Function> functions = new HashMap<>();
+		functions.put("not", notFunction);
+		
+		Expression e = new ExpressionBuilder().expression("not((4 * 5) >= (40 / 2))").functions(functions).buildExpression();
+		Assert.assertEquals(false, e.evaluate());
+	}
+	
+	@Test
+	public void testNotFunction2() throws Exception {
+		Function notFunction = new UnaryFunction() {
+			
+			@Override
+			public Object evaluate(Object param1) {
+				return !Boolean.valueOf(param1.toString());
+			}
+		};
+		
+		Map<String,Function> functions = new HashMap<>();
+		functions.put("not", notFunction);
+		
+		Expression e = new ExpressionBuilder().expression("not((4 * 5) > (40 / 2))").functions(functions).buildExpression();
 		Assert.assertEquals(true, e.evaluate());
 	}
 }
