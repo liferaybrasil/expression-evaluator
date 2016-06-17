@@ -7,6 +7,9 @@ import java.util.Stack;
 import org.apache.commons.lang3.CharUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import br.com.liferay.expression.evaluator.function.BinaryFunction;
+import br.com.liferay.expression.evaluator.function.Function;
+import br.com.liferay.expression.evaluator.function.UnaryFunction;
 import br.com.liferay.expression.evaluator.operand.Operand;
 import br.com.liferay.expression.evaluator.operator.FunctionOperator;
 import br.com.liferay.expression.evaluator.operator.Operator;
@@ -17,8 +20,13 @@ import br.com.liferay.expression.evaluator.operator.ParenthesisOperator;
  */
 public class Expression {
 
-	Expression(String expression, Map<String, Object> variables) {
+	Expression(String expression, Map<String,Function> functions, Map<String,Object> variables) {
 		this.expression = expression;
+		
+		if(functions != null) {
+			this.functions.putAll(functions);
+		}
+		
 		if(variables != null) {
 			this.variables.putAll(variables);
 		}
@@ -72,6 +80,20 @@ public class Expression {
 		currentToken.delete(0, currentToken.length());
 	}
 	
+	protected void addFunction(String functionName) {
+		Operator newFunction = new FunctionOperator(functionName);
+		
+		if(!operators.isEmpty()) {
+			if(operators.peek().compareTo(newFunction) >= 0) {
+				evaluate(operators.pop());
+			}
+		}
+		
+		operators.push(newFunction);
+		
+		lastToken = TOKEN_OPERATOR;
+	}
+	
 	protected void addOperator(String operator) {
 		Operator newOperator = Operator.create(operator);
 		
@@ -113,21 +135,50 @@ public class Expression {
 		operands.push(operand);	
 	}
 	
+	protected void evaluateFuntion(Operator operator) {
+		Operand operand = null;
+		
+		Function function = functions.get(operator.getText());
+		
+		if(function instanceof UnaryFunction) {
+			operand = operator.evaluate(operands.pop());
+		}
+		else if(function instanceof BinaryFunction) {
+			operand = executeBinaryFunction(function);
+		}
+		else {
+			operand = operator.evaluate(operands.pop(), operands.pop(), operands.pop());
+		}
+		operands.push(operand);
+	}
+	
+	protected Operand executeBinaryFunction(Function function) {
+		Object value2 = operands.pop().getValue();
+		Object value1 = operands.pop().getValue();
+		if(variables.containsKey(value1.toString())) {
+			value1 = variables.get(value1.toString());
+		}
+		if(variables.containsKey(value2.toString())) {
+			value2 = variables.get(value2.toString());
+		}
+		Object result = ((BinaryFunction)function).evaluate(value1, value2);
+		Operand operand = null;
+		if(result != null) {
+			operand = Operand.create(result.toString());
+		}
+		else {
+			operand = Operand.create("");
+		}
+		return operand;
+	}
+	
 	protected String extractFunctionName() {
 		String str = currentToken.toString();
 		
-		for(String func : SUPPORTED_FUNCTIONS) {
-			if(str.contains(func)) {
-				currentToken.delete(0, currentToken.length());
-				if(str.indexOf('.') != -1) {
-					currentToken.append(str.substring(0, str.indexOf('.')));
-					addOperand();
-				}
-				return func;
-			}
+		if(functions.containsKey(str)) {
+			currentToken.delete(0, currentToken.length());
+			return str;
 		}
-		
-		currentToken.delete(0, currentToken.length());
 		
 		return null;
 	}
@@ -147,7 +198,7 @@ public class Expression {
 		operators.pop();
 		
 		if(!operators.isEmpty() && operators.peek() instanceof FunctionOperator) {
-			evaluate(operators.pop());
+			evaluateFuntion(operators.pop());
 		}
 	}
 	
@@ -156,7 +207,7 @@ public class Expression {
 			String foundFunction = extractFunctionName();
 			
 			if(foundFunction != null) {
-				addOperator(foundFunction);
+				addFunction(foundFunction);
 			}
 			else if(lastChar != '-') {
 				throw new ExpressionException("Operator '(' not expected.");
@@ -186,6 +237,11 @@ public class Expression {
 		
 		if(CharUtils.isAsciiAlphanumeric(character) || character == '.') {
 			addCharacter(character);
+		}
+		else if(character == ',') {
+			if(operators.peek() instanceof ParenthesisOperator) {
+				addOperand();
+			}
 		}
 		else if(character == '=' && lastChar == '>') {
 			operators.pop();
@@ -264,7 +320,6 @@ public class Expression {
 		}
 	}
 
-	private static final String[] SUPPORTED_FUNCTIONS = new String[] {};
 	private static final int TOKEN_OPERATOR = 1;
 	private static final int TOKEN_OPERAND = 2;
 	private StringBuilder currentToken = new StringBuilder();
@@ -274,4 +329,5 @@ public class Expression {
 	private Stack<Operand> operands = new Stack<>();
 	private Stack<Operator> operators = new Stack<>();
 	private Map<String,Object> variables = new HashMap<>();
+	private Map<String,Function> functions = new HashMap<>();
 }

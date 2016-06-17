@@ -5,7 +5,7 @@ package br.com.liferay.expression.evaluator.operator;
  */
 public class FunctionOperator extends Operator {
 
-	protected FunctionOperator(String text) {
+	public FunctionOperator(String text) {
 		super(text);
 	}
 

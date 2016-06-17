@@ -3,6 +3,8 @@ package br.com.liferay.expression.evaluator;
 import java.util.HashMap;
 import java.util.Map;
 
+import br.com.liferay.expression.evaluator.function.Function;
+
 /**
  * @author Leonardo Barros
  */
@@ -13,7 +15,14 @@ public class ExpressionBuilder {
 		return this;
 	}
 	
-	public ExpressionBuilder variables(Map<String, Object> variables) {
+	public ExpressionBuilder functions(Map<String,Function> functions) {
+		if(functions != null) {
+			this.functions.putAll(functions);	
+		}
+		return this;
+	}
+	
+	public ExpressionBuilder variables(Map<String,Object> variables) {
 		if(variables != null) {
 			this.variables.putAll(variables);
 		}
@@ -21,9 +30,10 @@ public class ExpressionBuilder {
 	}
 	
 	public Expression buildExpression() {
-		return new Expression(expression, variables);
+		return new Expression(expression, functions, variables);
 	}
 	
 	private String expression;
-	private Map<String, Object> variables = new HashMap<>();
+	private Map<String,Object> variables = new HashMap<>();
+	private Map<String,Function> functions = new HashMap<>();
 }
