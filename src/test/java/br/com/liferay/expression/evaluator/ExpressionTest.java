@@ -454,4 +454,49 @@ public class ExpressionTest {
 		Expression e = new ExpressionBuilder().expression("not((4 * 5) > (40 / 2))").functions(functions).buildExpression();
 		Assert.assertEquals(true, e.evaluate());
 	}
+	
+	@Test
+	public void testSumFunction() throws Exception {
+		Map<String,Object> variables = new HashMap<>();
+		variables.put("field0", "20.5");
+		variables.put("field1", "12.8");
+		variables.put("field2", "3.2");
+		
+		Function sumFunction = new TernaryFunction() {
+			
+			@Override
+			public Object evaluate(Object param1, Object param2, Object param3) {
+				Float val1 = Float.valueOf(param1.toString());
+				Float val2 = Float.valueOf(param2.toString());
+				Float val3 = Float.valueOf(param3.toString());
+				return val1 + val2 + val3;
+			}
+		};
+		
+		Map<String,Function> functions = new HashMap<>();
+		functions.put("sum", sumFunction);
+		
+		Expression e = new ExpressionBuilder().expression("sum(field0,field1,field2)").functions(functions).variables(variables).buildExpression();
+		Assert.assertEquals(36.5F, e.evaluate());
+	}
+	
+	@Test
+	public void testSumFunction2() throws Exception {
+		Function sumFunction = new TernaryFunction() {
+			
+			@Override
+			public Object evaluate(Object param1, Object param2, Object param3) {
+				Integer val1 = Integer.valueOf(param1.toString());
+				Integer val2 = Integer.valueOf(param2.toString());
+				Integer val3 = Integer.valueOf(param3.toString());
+				return val1 + val2 + val3;
+			}
+		};
+		
+		Map<String,Function> functions = new HashMap<>();
+		functions.put("sum", sumFunction);
+		
+		Expression e = new ExpressionBuilder().expression("sum((30 + 50),(50 / 2 * 3),(8 - 2 - 9))").functions(functions).buildExpression();
+		Assert.assertEquals(152, e.evaluate());
+	}
 }
