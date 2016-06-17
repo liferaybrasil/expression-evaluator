@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import br.com.liferay.expression.evaluator.function.BinaryFunction;
 import br.com.liferay.expression.evaluator.function.Function;
+import br.com.liferay.expression.evaluator.function.TernaryFunction;
 import br.com.liferay.expression.evaluator.function.UnaryFunction;
 import br.com.liferay.expression.evaluator.operand.Operand;
 import br.com.liferay.expression.evaluator.operator.FunctionOperator;
@@ -141,15 +142,39 @@ public class Expression {
 		Function function = functions.get(operator.getText());
 		
 		if(function instanceof UnaryFunction) {
-			operand = operator.evaluate(operands.pop());
+			operand = executeUnaryFunction(function);
 		}
 		else if(function instanceof BinaryFunction) {
 			operand = executeBinaryFunction(function);
 		}
 		else {
-			operand = operator.evaluate(operands.pop(), operands.pop(), operands.pop());
+			operand = executeTernaryFunction(function);
 		}
 		operands.push(operand);
+	}
+	
+	protected Operand executeTernaryFunction(Function function) {
+		Object value3 = operands.pop().getValue();
+		Object value2 = operands.pop().getValue();
+		Object value1 = operands.pop().getValue();
+		if(variables.containsKey(value1.toString())) {
+			value1 = variables.get(value1.toString());
+		}
+		if(variables.containsKey(value2.toString())) {
+			value2 = variables.get(value2.toString());
+		}
+		if(variables.containsKey(value3.toString())) {
+			value3 = variables.get(value3.toString());
+		}
+		Object result = ((TernaryFunction)function).evaluate(value1, value2, value3);
+		Operand operand = null;
+		if(result != null) {
+			operand = Operand.create(result.toString());
+		}
+		else {
+			operand = Operand.create("");
+		}
+		return operand;
 	}
 	
 	protected Operand executeBinaryFunction(Function function) {
@@ -162,6 +187,22 @@ public class Expression {
 			value2 = variables.get(value2.toString());
 		}
 		Object result = ((BinaryFunction)function).evaluate(value1, value2);
+		Operand operand = null;
+		if(result != null) {
+			operand = Operand.create(result.toString());
+		}
+		else {
+			operand = Operand.create("");
+		}
+		return operand;
+	}
+	
+	protected Operand executeUnaryFunction(Function function) {
+		Object value1 = operands.pop().getValue();
+		if(variables.containsKey(value1.toString())) {
+			value1 = variables.get(value1.toString());
+		}
+		Object result = ((UnaryFunction)function).evaluate(value1);
 		Operand operand = null;
 		if(result != null) {
 			operand = Operand.create(result.toString());
@@ -217,7 +258,7 @@ public class Expression {
 	}
 	
 	protected int processString(int currendIndex, CharSequence expression) throws ExpressionException {
-		int nextIndex = StringUtils.indexOf(expression, '\"', currendIndex);
+		int nextIndex = StringUtils.indexOf(expression, '\"', currendIndex + 1);
 		
 		if(nextIndex == -1) {
 			throw new ExpressionException("An invalid String constant was found.");

@@ -349,7 +349,53 @@ public class ExpressionTest {
 		Map<String,Function> functions = new HashMap<>();
 		functions.put("contains", containsFunctions);
 		
-		Expression e = new ExpressionBuilder().expression("contains(field0,field1)").functions(functions).variables(variables).buildExpression();
+		Expression e = new ExpressionBuilder().expression("contains(field0, field1)").functions(functions).variables(variables).buildExpression();
 		Assert.assertEquals(true, e.evaluate());
+	}
+	
+	@Test
+	public void testConcatFunction() throws Exception {
+		Map<String,Object> variables = new HashMap<>();
+		variables.put("field0", "hello");
+		variables.put("field1", "world");
+		
+		Function containsFunctions = new BinaryFunction() {
+			
+			@Override
+			public Object evaluate(Object param1, Object param2) {
+				String str1 = param1.toString();
+				String str2 = param2.toString();
+				return str1.concat(" ").concat(str2);
+			}
+		};
+		
+		Map<String,Function> functions = new HashMap<>();
+		functions.put("concat", containsFunctions);
+		
+		Expression e = new ExpressionBuilder().expression("concat(field0, field1)").functions(functions).variables(variables).buildExpression();
+		Assert.assertEquals("hello world", e.evaluate());
+	}
+	
+	@Test
+	public void testConcatFunction2() throws Exception {
+		Map<String,Object> variables = new HashMap<>();
+		variables.put("field0", "hello");
+		variables.put("field1", "world");
+		
+		Function containsFunctions = new BinaryFunction() {
+			
+			@Override
+			public Object evaluate(Object param1, Object param2) {
+				String str1 = param1.toString();
+				String str2 = param2.toString();
+				return str1.concat(str2);
+			}
+		};
+		
+		Map<String,Function> functions = new HashMap<>();
+		functions.put("concat", containsFunctions);
+		
+		Expression e = new ExpressionBuilder().expression("concat(field0,concat(\" \", field1))").functions(functions).variables(variables).buildExpression();
+		Assert.assertEquals("hello world", e.evaluate());
 	}
 }
