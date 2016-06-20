@@ -65,16 +65,12 @@ public abstract class ArithmeticRelationalOperator extends Operator {
 				operand2.getType().equals(BigInteger.class)) {
 			return BigInteger.class;
 		}
-		else if(operand1.getType().equals(Integer.class) ||
-				operand2.getType().equals(Integer.class)) {
-			return Integer.class;
-		}
 		else if(operand1.getType().equals(Long.class) ||
 				operand2.getType().equals(Long.class)) {
 			return Long.class;
 		}
 		
-		return BigDecimal.class;
+		return Integer.class;
 	}
 	
 	@Override

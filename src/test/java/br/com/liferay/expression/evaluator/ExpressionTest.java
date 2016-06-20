@@ -1,5 +1,7 @@
 package br.com.liferay.expression.evaluator;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,6 +48,12 @@ public class ExpressionTest {
 	}
 	
 	@Test
+	public void testAddition4() throws Exception {
+		Expression expression = new ExpressionBuilder().expression("(2 + 5) - (7 + 3)").buildExpression();
+		Assert.assertEquals(-3, expression.evaluate());
+	}
+	
+	@Test
 	public void testSubtraction() throws Exception {
 		Expression e = new ExpressionBuilder().expression("5 - 4").buildExpression();
 		Assert.assertEquals(1, e.evaluate());
@@ -61,6 +69,12 @@ public class ExpressionTest {
 	public void testSubtraction3() throws Exception {
 		Expression e = new ExpressionBuilder().expression("3 - 6").buildExpression();
 		Assert.assertEquals(-3, e.evaluate());
+	}
+	
+	@Test
+	public void testSubtraction4() throws Exception {
+		Expression e = new ExpressionBuilder().expression("(8 - 6) - (7 + 1) * (4 - 3)").buildExpression();
+		Assert.assertEquals(-6, e.evaluate());
 	}
 	
 	@Test
@@ -498,5 +512,408 @@ public class ExpressionTest {
 		
 		Expression e = new ExpressionBuilder().expression("sum((30 + 50),(50 / 2 * 3),(8 - 2 - 9))").functions(functions).buildExpression();
 		Assert.assertEquals(152, e.evaluate());
+	}
+	
+	@Test
+	public void testSumFunction3() throws Exception {
+		Function sumFunction = new TernaryFunction() {
+			
+			@Override
+			public Object evaluate(Object param1, Object param2, Object param3) {
+				Integer val1 = Integer.valueOf(param1.toString());
+				Integer val2 = Integer.valueOf(param2.toString());
+				Integer val3 = Integer.valueOf(param3.toString());
+				return val1 + val2 + val3;
+			}
+		};
+		
+		Map<String,Function> functions = new HashMap<>();
+		functions.put("sum", sumFunction);
+		
+		Expression e = new ExpressionBuilder().expression("sum(20,(24/2),(13%2)) + 0").functions(functions).buildExpression();
+		Assert.assertEquals(33, e.evaluate());
+	}
+	
+	@Test
+	public void testEqualsFunction() throws Exception {
+		Map<String,Object> variables = new HashMap<>();
+		variables.put("field0", "hello");
+		
+		Function equalsFunctions = new BinaryFunction() {
+			
+			@Override
+			public Object evaluate(Object param1, Object param2) {
+				String str1 = param1.toString();
+				String str2 = param2.toString();
+				return str1.equals(str2);
+			}
+		};
+		
+		Map<String,Function> functions = new HashMap<>();
+		functions.put("equals", equalsFunctions);
+		
+		Expression e = new ExpressionBuilder().expression("equals(field0,\"hello\")").functions(functions).variables(variables).buildExpression();
+		Assert.assertEquals(true, e.evaluate());
+	}
+
+	@Test
+	public void testInvalidStringConstant() throws Exception {
+		Map<String,Object> variables = new HashMap<>();
+		variables.put("field0", "hello");
+		
+		Function equalsFunctions = new BinaryFunction() {
+			
+			@Override
+			public Object evaluate(Object param1, Object param2) {
+				String str1 = param1.toString();
+				String str2 = param2.toString();
+				return str1.equals(str2);
+			}
+		};
+		
+		Map<String,Function> functions = new HashMap<>();
+		functions.put("equals", equalsFunctions);
+		Expression e = new ExpressionBuilder().expression("equals(fields0,\"hello)").functions(functions).variables(variables).buildExpression();
+		try {
+			e.evaluate();
+			Assert.fail();
+		}
+		catch(ExpressionException ee) {
+			Assert.assertEquals("An invalid String constant was found.", ee.getMessage());
+		}
+	}
+	
+	@Test
+	public void testInvalidAndOperator() throws Exception {
+		Expression e = new ExpressionBuilder().expression("1 & 2").buildExpression();
+		try {
+			e.evaluate();
+			Assert.fail();
+		}
+		catch(ExpressionException ee) {
+			Assert.assertEquals("The conditional operator is '&&'", ee.getMessage());
+		}
+	}
+	
+	@Test
+	public void testInvalidOrOperator() throws Exception {
+		Expression e = new ExpressionBuilder().expression("1 | 2").buildExpression();
+		try {
+			e.evaluate();
+			Assert.fail();
+		}
+		catch(ExpressionException ee) {
+			Assert.assertEquals("The conditional operator is '||'", ee.getMessage());
+		}
+	}
+	
+	@Test
+	public void testInvalidToken() throws Exception {
+		Expression e = new ExpressionBuilder().expression("1 # 2").buildExpression();
+		try {
+			e.evaluate();
+			Assert.fail();
+		}
+		catch(ExpressionException ee) {
+			Assert.assertEquals("Invalid token found: " + '#', ee.getMessage());
+		}
+	}
+	
+	@Test
+	public void testModulusPrecedence() throws Exception {
+		Expression e = new ExpressionBuilder().expression("8 / 7 % 3 * 3").buildExpression();
+		Assert.assertEquals(24, e.evaluate());
+	}
+	
+	@Test
+	public void testLongOperation() throws Exception {
+		Expression e = new ExpressionBuilder().expression("8l * 4").buildExpression();
+		Assert.assertEquals(32L, e.evaluate());
+	}
+	
+	@Test
+	public void testBigIntegerOperation() throws Exception {
+		Expression e = new ExpressionBuilder().expression("312793281798471982471984798471297157918571985719857918571985719857195 + 1").buildExpression();
+		Assert.assertEquals(new BigInteger("312793281798471982471984798471297157918571985719857918571985719857196"), e.evaluate());
+	}
+	
+	@Test
+	public void testBigIntegerOperation2() throws Exception {
+		Expression e = new ExpressionBuilder().expression("312793281798471982471984798471297157918571985719857918571985719857196 >= 312793281798471982471984798471297157918571985719857918571985719857195").buildExpression();
+		Assert.assertEquals(true, e.evaluate());
+	}
+	
+	@Test
+	public void testBigIntegerOperation3() throws Exception {
+		Expression e = new ExpressionBuilder().expression("312793281798471982471984798471297157918571985719857918571985719857196 >= 312793281798471982471984798471297157918571985719857918571985719857198").buildExpression();
+		Assert.assertEquals(false, e.evaluate());
+	}
+	
+	@Test
+	public void testBigIntegerOperation4() throws Exception {
+		Expression e = new ExpressionBuilder().expression("312793281798471982471984798471297157918571985719857918571985719857196 > 312793281798471982471984798471297157918571985719857918571985719857198").buildExpression();
+		Assert.assertEquals(false, e.evaluate());
+	}
+	
+	@Test
+	public void testBigIntegerOperation5() throws Exception {
+		Expression e = new ExpressionBuilder().expression("312793281798471982471984798471297157918571985719857918571985719857199 > 312793281798471982471984798471297157918571985719857918571985719857198").buildExpression();
+		Assert.assertEquals(true, e.evaluate());
+	}
+
+	@Test
+	public void testBigIntegerOperation6() throws Exception {
+		Expression e = new ExpressionBuilder().expression("312793281798471982471984798471297157918571985719857918571985719857199 > 312793281798471982471984798471297157918571985719857918571985719857199").buildExpression();
+		Assert.assertEquals(false, e.evaluate());
+	}
+	
+	@Test
+	public void testBigIntegerOperation7() throws Exception {
+		Expression e = new ExpressionBuilder().expression("312793281798471982471984798471297157918571985719857918571985719857199 < 312793281798471982471984798471297157918571985719857918571985719857199").buildExpression();
+		Assert.assertEquals(false, e.evaluate());
+	}
+	
+	@Test
+	public void testBigIntegerOperation8() throws Exception {
+		Expression e = new ExpressionBuilder().expression("312793281798471982471984798471297157918571985719857918571985719857198 < 312793281798471982471984798471297157918571985719857918571985719857199").buildExpression();
+		Assert.assertEquals(true, e.evaluate());
+	}
+	
+	@Test
+	public void testBigIntegerOperation9() throws Exception {
+		Expression e = new ExpressionBuilder().expression("312793281798471982471984798471297157918571985719857918571985719857198 <= 312793281798471982471984798471297157918571985719857918571985719857197").buildExpression();
+		Assert.assertEquals(false, e.evaluate());
+	}
+	
+	@Test
+	public void testBigIntegerOperation10() throws Exception {
+		Expression e = new ExpressionBuilder().expression("312793281798471982471984798471297157918571985719857918571985719857198 <= 312793281798471982471984798471297157918571985719857918571985719857199").buildExpression();
+		Assert.assertEquals(true, e.evaluate());
+	}
+
+	@Test
+	public void testBigDecimalOperation() throws Exception {
+		Expression e = new ExpressionBuilder().expression("312793281798471982471984799471947894712984712984791749817948719824712984791791749817498172498712984721987491872498719827981749817248917498712489798479817498172498179878471297157918571985719857918571985719857195038201983091280482098091809851905819058190584879187498172498271498714981274981274981724917249172948721984719487198274291847914879195081031257645125621676717641672546712564712.0 + 1").buildExpression();
+		Assert.assertEquals(new BigDecimal("312793281798471982471984799471947894712984712984791749817948719824712984791791749817498172498712984721987491872498719827981749817248917498712489798479817498172498179878471297157918571985719857918571985719857195038201983091280482098091809851905819058190584879187498172498271498714981274981274981724917249172948721984719487198274291847914879195081031257645125621676717641672546712564713.0"), e.evaluate());
+	}
+	
+	@Test
+	public void testBigDecimalOperation2() throws Exception {
+		Expression e = new ExpressionBuilder().expression("312793281798471982471984799471947894712984712984791749817948719824712984791791749817498172498712984721987491872498719827981749817248917498712489798479817498172498179878471297157918571985719857918571985719857195038201983091280482098091809851905819058190584879187498172498271498714981274981274981724917249172948721984719487198274291847914879195081031257645125621676717641672546712564712.0 >= 312793281798471982471984799471947894712984712984791749817948719824712984791791749817498172498712984721987491872498719827981749817248917498712489798479817498172498179878471297157918571985719857918571985719857195038201983091280482098091809851905819058190584879187498172498271498714981274981274981724917249172948721984719487198274291847914879195081031257645125621676717641672546712564712.5").buildExpression();
+		Assert.assertEquals(false, e.evaluate());
+	}
+	
+	@Test
+	public void testBigDecimalOperation3() throws Exception {
+		Expression e = new ExpressionBuilder().expression("312793281798471982471984799471947894712984712984791749817948719824712984791791749817498172498712984721987491872498719827981749817248917498712489798479817498172498179878471297157918571985719857918571985719857195038201983091280482098091809851905819058190584879187498172498271498714981274981274981724917249172948721984719487198274291847914879195081031257645125621676717641672546712564713.0 >= 312793281798471982471984799471947894712984712984791749817948719824712984791791749817498172498712984721987491872498719827981749817248917498712489798479817498172498179878471297157918571985719857918571985719857195038201983091280482098091809851905819058190584879187498172498271498714981274981274981724917249172948721984719487198274291847914879195081031257645125621676717641672546712564712.5").buildExpression();
+		Assert.assertEquals(true, e.evaluate());
+	}
+	
+	@Test
+	public void testBigDecimalOperation4() throws Exception {
+		Expression e = new ExpressionBuilder().expression("312793281798471982471984799471947894712984712984791749817948719824712984791791749817498172498712984721987491872498719827981749817248917498712489798479817498172498179878471297157918571985719857918571985719857195038201983091280482098091809851905819058190584879187498172498271498714981274981274981724917249172948721984719487198274291847914879195081031257645125621676717641672546712564713.0 > 312793281798471982471984799471947894712984712984791749817948719824712984791791749817498172498712984721987491872498719827981749817248917498712489798479817498172498179878471297157918571985719857918571985719857195038201983091280482098091809851905819058190584879187498172498271498714981274981274981724917249172948721984719487198274291847914879195081031257645125621676717641672546712564712.5").buildExpression();
+		Assert.assertEquals(true, e.evaluate());
+	}
+	
+	@Test
+	public void testBigDecimalOperation5() throws Exception {
+		Expression e = new ExpressionBuilder().expression("312793281798471982471984799471947894712984712984791749817948719824712984791791749817498172498712984721987491872498719827981749817248917498712489798479817498172498179878471297157918571985719857918571985719857195038201983091280482098091809851905819058190584879187498172498271498714981274981274981724917249172948721984719487198274291847914879195081031257645125621676717641672546712564714.0 < 312793281798471982471984799471947894712984712984791749817948719824712984791791749817498172498712984721987491872498719827981749817248917498712489798479817498172498179878471297157918571985719857918571985719857195038201983091280482098091809851905819058190584879187498172498271498714981274981274981724917249172948721984719487198274291847914879195081031257645125621676717641672546712564712.5").buildExpression();
+		Assert.assertEquals(false, e.evaluate());
+	}
+	
+	@Test
+	public void testBigDecimalOperation6() throws Exception {
+		Expression e = new ExpressionBuilder().expression("312793281798471982471984799471947894712984712984791749817948719824712984791791749817498172498712984721987491872498719827981749817248917498712489798479817498172498179878471297157918571985719857918571985719857195038201983091280482098091809851905819058190584879187498172498271498714981274981274981724917249172948721984719487198274291847914879195081031257645125621676717641672546712564714.0 < 312793281798471982471984799471947894712984712984791749817948719824712984791791749817498172498712984721987491872498719827981749817248917498712489798479817498172498179878471297157918571985719857918571985719857195038201983091280482098091809851905819058190584879187498172498271498714981274981274981724917249172948721984719487198274291847914879195081031257645125621676717641672546712564714.0").buildExpression();
+		Assert.assertEquals(false, e.evaluate());
+	}
+	
+	@Test
+	public void testBigDecimalOperation7() throws Exception {
+		Expression e = new ExpressionBuilder().expression("312793281798471982471984799471947894712984712984791749817948719824712984791791749817498172498712984721987491872498719827981749817248917498712489798479817498172498179878471297157918571985719857918571985719857195038201983091280482098091809851905819058190584879187498172498271498714981274981274981724917249172948721984719487198274291847914879195081031257645125621676717641672546712564714.0 <= 312793281798471982471984799471947894712984712984791749817948719824712984791791749817498172498712984721987491872498719827981749817248917498712489798479817498172498179878471297157918571985719857918571985719857195038201983091280482098091809851905819058190584879187498172498271498714981274981274981724917249172948721984719487198274291847914879195081031257645125621676717641672546712564714.0").buildExpression();
+		Assert.assertEquals(true, e.evaluate());
+	}
+	
+	@Test
+	public void testBigDecimalOperation8() throws Exception {
+		Expression e = new ExpressionBuilder().expression("312793281798471982471984799471947894712984712984791749817948719824712984791791749817498172498712984721987491872498719827981749817248917498712489798479817498172498179878471297157918571985719857918571985719857195038201983091280482098091809851905819058190584879187498172498271498714981274981274981724917249172948721984719487198274291847914879195081031257645125621676717641672546712564714.0 <= 312793281798471982471984799471947894712984712984791749817948719824712984791791749817498172498712984721987491872498719827981749817248917498712489798479817498172498179878471297157918571985719857918571985719857195038201983091280482098091809851905819058190584879187498172498271498714981274981274981724917249172948721984719487198274291847914879195081031257645125621676717641672546712564713.0").buildExpression();
+		Assert.assertEquals(false, e.evaluate());
+	}
+	
+	@Test
+	public void testBigDecimalOperation9() throws Exception {
+		Expression e = new ExpressionBuilder().expression("312793281798471982471984799471947894712984712984791749817948719824712984791791749817498172498712984721987491872498719827981749817248917498712489798479817498172498179878471297157918571985719857918571985719857195038201983091280482098091809851905819058190584879187498172498271498714981274981274981724917249172948721984719487198274291847914879195081031257645125621676717641672546712564713.0 > 312793281798471982471984799471947894712984712984791749817948719824712984791791749817498172498712984721987491872498719827981749817248917498712489798479817498172498179878471297157918571985719857918571985719857195038201983091280482098091809851905819058190584879187498172498271498714981274981274981724917249172948721984719487198274291847914879195081031257645125621676717641672546712564713.0").buildExpression();
+		Assert.assertEquals(false, e.evaluate());
+	}
+
+	@Test
+	public void testBigDecimalOperation10() throws Exception {
+		Expression e = new ExpressionBuilder().expression("312793281798471982471984799471947894712984712984791749817948719824712984791791749817498172498712984721987491872498719827981749817248917498712489798479817498172498179878471297157918571985719857918571985719857195038201983091280482098091809851905819058190584879187498172498271498714981274981274981724917249172948721984719487198274291847914879195081031257645125621676717641672546712564714.0 < 312793281798471982471984799471947894712984712984791749817948719824712984791791749817498172498712984721987491872498719827981749817248917498712489798479817498172498179878471297157918571985719857918571985719857195038201983091280482098091809851905819058190584879187498172498271498714981274981274981724917249172948721984719487198274291847914879195081031257645125621676717641672546712564715.0").buildExpression();
+		Assert.assertEquals(true, e.evaluate());
+	}
+	
+	@Test
+	public void testBooleanConstant() throws Exception {
+		Expression e = new ExpressionBuilder().expression("true && true").buildExpression();
+		Assert.assertEquals(true, e.evaluate());
+	}
+	
+	@Test
+	public void testBooleanConstant2() throws Exception {
+		Expression e = new ExpressionBuilder().expression("true && false").buildExpression();
+		Assert.assertEquals(false, e.evaluate());
+	}
+	
+	@Test
+	public void testStringConcatenation() throws Exception {
+		Expression e = new ExpressionBuilder().expression("\"hello\" + 1").buildExpression();
+		Assert.assertEquals("hello1", e.evaluate());
+	}
+	
+	@Test
+	public void testTernaryFunctionWithVariables() throws Exception {
+		Map<String,Object> variables = new HashMap<>();
+		variables.put("a", "10");
+		variables.put("b", "9");
+		variables.put("c", "8");
+		
+		Function ternaryFunction = new TernaryFunction() {
+			
+			@Override
+			public Object evaluate(Object param1, Object param2, Object param3) {
+				Integer val1 = Integer.valueOf(param1.toString());
+				Integer val2 = Integer.valueOf(param2.toString());
+				Integer val3 = Integer.valueOf(param3.toString());
+				return val1 + val2 + val3;
+			}
+		};
+		
+		Map<String,Function> functions = new HashMap<>();
+		functions.put("sum", ternaryFunction);
+		
+		Expression e = new ExpressionBuilder().expression("sum(a,b,c)").functions(functions).variables(variables).buildExpression();
+		Assert.assertEquals(27, e.evaluate());
+	}
+	
+	@Test
+	public void testBinaryFunctionWithNullReturn() throws Exception {
+		Function binaryFunction = new BinaryFunction() {
+			
+			@Override
+			public Object evaluate(Object param1, Object param2) {
+				return null;
+			}
+		};
+		
+		Map<String,Function> functions = new HashMap<>();
+		functions.put("test", binaryFunction);
+		
+		Expression e = new ExpressionBuilder().expression("test(1,2)").functions(functions).buildExpression();
+		Assert.assertEquals("", e.evaluate());
+	}
+	
+	@Test
+	public void testTernaryFunctionWithNullReturn() throws Exception {
+		Function ternaryFunction = new TernaryFunction() {
+			
+			@Override
+			public Object evaluate(Object param1, Object param2, Object param3) {
+				return null;
+			}
+		};
+		
+		Map<String,Function> functions = new HashMap<>();
+		functions.put("test", ternaryFunction);
+		
+		Expression e = new ExpressionBuilder().expression("test(1,2,3)").functions(functions).buildExpression();
+		Assert.assertEquals("", e.evaluate());
+	}
+	
+	@Test
+	public void testUnaryFunctionWithNullReturn() throws Exception {
+		Function unaryFunction = new UnaryFunction() {
+			
+			@Override
+			public Object evaluate(Object param1) {
+				return null;
+			}
+		};
+		
+		Map<String,Function> functions = new HashMap<>();
+		functions.put("test", unaryFunction);
+		
+		Expression e = new ExpressionBuilder().expression("test(1)").functions(functions).buildExpression();
+		Assert.assertEquals("", e.evaluate());
+	}
+	
+	@Test
+	public void testExpressionBuilder() throws Exception {
+		Expression e = new ExpressionBuilder().expression("1 + 1").functions(null).variables(null).buildExpression();
+		Assert.assertEquals(2, e.evaluate());
+	}
+	
+	@Test
+	public void testClosingParenthesis() throws Exception {
+		Expression e = new ExpressionBuilder().expression("1 + 2)").buildExpression();
+		try {
+			e.evaluate();
+			Assert.fail();
+		}
+		catch(ExpressionException ee) {
+			Assert.assertEquals("It wasn't found an opening parenthesis", ee.getMessage());
+		}
+	}
+	
+	@Test
+	public void testInvalidExpression() throws Exception {
+		Expression e = new ExpressionBuilder().expression("1 + + 2").buildExpression();
+		try {
+			e.evaluate();
+			Assert.fail();
+		}
+		catch(ExpressionException ee) {
+			Assert.assertEquals("Invalid expression", ee.getMessage());
+			Assert.assertNotNull(ee.getCause());
+		}
+	}
+	
+	@Test
+	public void testInvalidExpression2() throws Exception {
+		Expression e = new ExpressionBuilder().expression("1, 2").buildExpression();
+		try {
+			e.evaluate();
+			Assert.fail();
+		}
+		catch(ExpressionException ee) {
+			Assert.assertEquals("Invalid expression", ee.getMessage());
+		}
+	}
+	
+	@Test
+	public void testFunctionAndBoolean() throws Exception {
+		Function unaryFunction = new UnaryFunction() {
+			
+			@Override
+			public Object evaluate(Object param1) {
+				return true;
+			}
+		};
+		
+		Map<String,Function> functions = new HashMap<>();
+		functions.put("test", unaryFunction);
+		
+		Expression e = new ExpressionBuilder().expression("test(1) && true").functions(functions).buildExpression();
+		Assert.assertEquals(true, e.evaluate());
+	}
+	
+	@Test
+	public void testFunctionWithoutDefinition() throws Exception {
+		Expression e = new ExpressionBuilder().expression("test(1)").buildExpression();
+		try {
+			e.evaluate();
+			Assert.fail();
+		}
+		catch(ExpressionException ee) {
+			Assert.assertEquals("Operator '(' not expected.", ee.getMessage());
+		}
 	}
 }

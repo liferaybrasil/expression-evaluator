@@ -21,16 +21,16 @@ public abstract class Operand {
 			else if(!text.contains("l") && NumberUtils.toInt(text) != 0) {
 				return new IntegerOperand(text);
 			}
-			else if(NumberUtils.toLong(text) != 0) {
-				return new LongOperand(text);
+			else if(text.contains("l") && NumberUtils.toLong(text.substring(0, text.length()-1)) != 0) {
+				return new LongOperand(text.substring(0, text.length()-1));
 			}
 			else if(!text.contains(".")) {
 				return new BigIntegerOperand(text);
 			}
-			else if(!text.contains("d") && NumberUtils.toFloat(text) != 0) {
+			else if(!text.contains("d") && NumberUtils.toFloat(text) != Float.POSITIVE_INFINITY) {
 				return new FloatOperand(text);
 			}
-			else if(NumberUtils.toDouble(text) != 0) {
+			else if(NumberUtils.toDouble(text) != Float.POSITIVE_INFINITY) {
 				return new DoubleOperand(text);
 			}
 			else if(text.contains(".")) {

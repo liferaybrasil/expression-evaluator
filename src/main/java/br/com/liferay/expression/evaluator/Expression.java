@@ -24,13 +24,8 @@ public class Expression {
 	Expression(String expression, Map<String,Function> functions, Map<String,Object> variables) {
 		this.expression = expression;
 		
-		if(functions != null) {
-			this.functions.putAll(functions);
-		}
-		
-		if(variables != null) {
-			this.variables.putAll(variables);
-		}
+		this.functions.putAll(functions);
+		this.variables.putAll(variables);
 		
 		if(StringUtils.isBlank(expression)) {
 			throw new IllegalArgumentException(
@@ -60,6 +55,9 @@ public class Expression {
 			return operands.pop().getValue();
 		
 		}
+		catch(ExpressionException ee) {
+			throw ee;
+		}
 		catch(Exception ex) {
 			throw new ExpressionException("Invalid expression", ex);
 		}
@@ -83,12 +81,6 @@ public class Expression {
 	
 	protected void addFunction(String functionName) {
 		Operator newFunction = new FunctionOperator(functionName);
-		
-		if(!operators.isEmpty()) {
-			if(operators.peek().compareTo(newFunction) >= 0) {
-				evaluate(operators.pop());
-			}
-		}
 		
 		operators.push(newFunction);
 		
@@ -157,15 +149,6 @@ public class Expression {
 		Object value3 = operands.pop().getValue();
 		Object value2 = operands.pop().getValue();
 		Object value1 = operands.pop().getValue();
-		if(variables.containsKey(value1.toString())) {
-			value1 = variables.get(value1.toString());
-		}
-		if(variables.containsKey(value2.toString())) {
-			value2 = variables.get(value2.toString());
-		}
-		if(variables.containsKey(value3.toString())) {
-			value3 = variables.get(value3.toString());
-		}
 		Object result = ((TernaryFunction)function).evaluate(value1, value2, value3);
 		Operand operand = null;
 		if(result != null) {
@@ -180,12 +163,6 @@ public class Expression {
 	protected Operand executeBinaryFunction(Function function) {
 		Object value2 = operands.pop().getValue();
 		Object value1 = operands.pop().getValue();
-		if(variables.containsKey(value1.toString())) {
-			value1 = variables.get(value1.toString());
-		}
-		if(variables.containsKey(value2.toString())) {
-			value2 = variables.get(value2.toString());
-		}
 		Object result = ((BinaryFunction)function).evaluate(value1, value2);
 		Operand operand = null;
 		if(result != null) {
@@ -199,9 +176,6 @@ public class Expression {
 	
 	protected Operand executeUnaryFunction(Function function) {
 		Object value1 = operands.pop().getValue();
-		if(variables.containsKey(value1.toString())) {
-			value1 = variables.get(value1.toString());
-		}
 		Object result = ((UnaryFunction)function).evaluate(value1);
 		Operand operand = null;
 		if(result != null) {
@@ -276,15 +250,7 @@ public class Expression {
 			return;
 		}
 		
-		if(CharUtils.isAsciiAlphanumeric(character) || character == '.') {
-			addCharacter(character);
-		}
-		else if(character == ',') {
-			if(operators.peek() instanceof ParenthesisOperator) {
-				addOperand();
-			}
-		}
-		else if(character == '=' && lastChar == '>') {
+		if(character == '=' && lastChar == '>') {
 			operators.pop();
 			addOperator(">=");
 		}
@@ -301,15 +267,27 @@ public class Expression {
 		}
 		else if(character == '&' && lastChar == '&') {
 			processOperator("&&");
+			lastChar = '\0';
+			return;
 		}
 		else if(character == '|' && lastChar == '|') {
 			processOperator("||");
+			lastChar = '\0';
+			return;
 		}
 		else if(lastChar == '&' && character != '&') {
 			throw new ExpressionException("The conditional operator is '&&'");
 		}
 		else if(lastChar == '|' && character != '|') {
 			throw new ExpressionException("The conditional operator is '||'");
+		}
+		else if(CharUtils.isAsciiAlphanumeric(character) || character == '.') {
+			addCharacter(character);
+		}
+		else if(character == ',') {
+			if(operators.peek() instanceof ParenthesisOperator) {
+				addOperand();
+			}
 		}
 		else if(character == '=' || character == '&' || character == '|') {
 			lastChar = character;
