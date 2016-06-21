@@ -17,7 +17,7 @@ import br.com.liferay.expression.evaluator.operator.relational.NotEqualsOperator
 /**
  * @author Leonardo Barros
  */
-public class Operator implements Comparable<Operator> {
+public abstract class Operator implements Comparable<Operator> {
 	
 	protected Operator(String text) {
 		this.text = text;
@@ -86,6 +86,7 @@ public class Operator implements Comparable<Operator> {
 		return true;
 	}
 
+	@Override
 	public int compareTo(Operator operator) {
         return this.getPrecedence() - operator.getPrecedence();
     }
