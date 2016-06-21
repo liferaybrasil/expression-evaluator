@@ -12,36 +12,36 @@ public abstract class Operand {
 	}
 	
 	public static Operand create(String text) {
-		text = text.toLowerCase();
+		String lowerText = text.toLowerCase();
 		
-		if(NumberUtils.isNumber(text)) {
-			if(text.startsWith("0") || text.startsWith("0.")) {
+		if(NumberUtils.isNumber(lowerText)) {
+			if(lowerText.startsWith("0") || lowerText.startsWith("0.")) {
 				return new IntegerOperand("0");
 			}
-			else if(!text.contains("l") && NumberUtils.toInt(text) != 0) {
-				return new IntegerOperand(text);
+			else if(!lowerText.contains("l") && NumberUtils.toInt(lowerText) != 0) {
+				return new IntegerOperand(lowerText);
 			}
-			else if(text.contains("l") && NumberUtils.toLong(text.substring(0, text.length()-1)) != 0) {
-				return new LongOperand(text.substring(0, text.length()-1));
+			else if(lowerText.contains("l") && NumberUtils.toLong(lowerText.substring(0, lowerText.length()-1)) != 0) {
+				return new LongOperand(lowerText.substring(0, lowerText.length()-1));
 			}
-			else if(!text.contains(".")) {
-				return new BigIntegerOperand(text);
+			else if(!lowerText.contains(".")) {
+				return new BigIntegerOperand(lowerText);
 			}
-			else if(!text.contains("d") && Float.compare(NumberUtils.toFloat(text),Float.POSITIVE_INFINITY) != 0) {
-				return new FloatOperand(text);
+			else if(!lowerText.contains("d") && Float.compare(NumberUtils.toFloat(lowerText),Float.POSITIVE_INFINITY) != 0) {
+				return new FloatOperand(lowerText);
 			}
-			else if(Double.compare(NumberUtils.toDouble(text), Double.POSITIVE_INFINITY) != 0) {
-				return new DoubleOperand(text);
+			else if(Double.compare(NumberUtils.toDouble(lowerText), Double.POSITIVE_INFINITY) != 0) {
+				return new DoubleOperand(lowerText);
 			}
-			else if(text.contains(".")) {
-				return new BigDecimalOperand(text);
+			else if(lowerText.contains(".")) {
+				return new BigDecimalOperand(lowerText);
 			}
 		}
-		else if(text.contains("true") || text.contains("false")) {
-			return new BooleanOperand(text);
+		else if(lowerText.contains("true") || lowerText.contains("false")) {
+			return new BooleanOperand(lowerText);
 		}
 		
-		return new StringOperand(text);
+		return new StringOperand(lowerText);
 	}
 	
 	public String getText() {

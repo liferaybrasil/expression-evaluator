@@ -16,7 +16,7 @@ public class AdditionOperator extends ArithmeticRelationalOperator {
 	private static final Map<Class<?>, BinaryInterface> mapNegative;
 	
 	static {
-		map = new HashMap<Class<?>, BinaryInterface>();
+		map = new HashMap<>();
 		map.put(String.class, (n1, n2) -> ((String)n2).concat((String)n1));
 		map.put(Integer.class, (n1, n2) -> (Integer)n1 + (Integer)n2);
 		map.put(Long.class, (n1, n2) -> (Long)n1 + (Long)n2);
@@ -25,7 +25,7 @@ public class AdditionOperator extends ArithmeticRelationalOperator {
 		map.put(BigInteger.class, (n1, n2) -> ((BigInteger)n1).add((BigInteger)n2));
 		map.put(BigDecimal.class, (n1, n2) -> ((BigDecimal)n1).add((BigDecimal)n2));
 		
-		mapNegative = new HashMap<Class<?>, BinaryInterface>();
+		mapNegative = new HashMap<>();
 		mapNegative.put(Integer.class, (n1, n2) -> (Integer)n2 - (Integer)n1);
 		mapNegative.put(Long.class, (n1, n2) -> (Long)n2 - (Long)n1);
 		mapNegative.put(Float.class, (n1, n2) -> (Float)n2 - (Float)n1);

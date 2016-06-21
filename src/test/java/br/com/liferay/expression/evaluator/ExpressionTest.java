@@ -877,18 +877,6 @@ public class ExpressionTest {
 	}
 	
 	@Test
-	public void testInvalidExpression2() throws Exception {
-		Expression e = new ExpressionBuilder().expression("1, 2").buildExpression();
-		try {
-			e.evaluate();
-			Assert.fail();
-		}
-		catch(ExpressionException ee) {
-			Assert.assertEquals("Invalid expression", ee.getMessage());
-		}
-	}
-	
-	@Test
 	public void testFunctionAndBoolean() throws Exception {
 		Function unaryFunction = new UnaryFunction() {
 			

@@ -1,8 +1,9 @@
 package br.com.liferay.expression.evaluator;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Stack;
 
 import org.apache.commons.lang3.CharUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -90,10 +91,8 @@ public class Expression {
 	protected void addOperator(String operator) {
 		Operator newOperator = Operator.create(operator);
 		
-		if(!operator.equals("(") && !operators.isEmpty()) {
-			if(operators.peek().compareTo(newOperator) >= 0) {
-				evaluate(operators.pop());
-			}
+		if(!"(".equals(operator) && !operators.isEmpty() && operators.peek().compareTo(newOperator) >= 0) {
+			evaluate(operators.pop());
 		}
 		
 		operators.push(newOperator);
@@ -104,7 +103,7 @@ public class Expression {
 	protected void addCharacter(char token) {
 		currentToken.append(token);
 		String value = currentToken.toString();
-		if(value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")) {
+		if("true".equalsIgnoreCase(value) || "false".equalsIgnoreCase(value)) {
 			addOperand();
 		}
 	}
@@ -118,7 +117,7 @@ public class Expression {
 	}
 	
 	protected void evaluate(Operator operator) {
-		Operand operand = null;
+		Operand operand;
 		if(operator.isBinary()) {
 			operand = operator.evaluate(operands.pop(), operands.pop());
 		}
@@ -129,7 +128,7 @@ public class Expression {
 	}
 	
 	protected void evaluateFuntion(Operator operator) {
-		Operand operand = null;
+		Operand operand;
 		
 		Function function = functions.get(operator.getText());
 		
@@ -150,7 +149,7 @@ public class Expression {
 		Object value2 = operands.pop().getValue();
 		Object value1 = operands.pop().getValue();
 		Object result = ((TernaryFunction)function).evaluate(value1, value2, value3);
-		Operand operand = null;
+		Operand operand;
 		if(result != null) {
 			operand = Operand.create(result.toString());
 		}
@@ -164,7 +163,7 @@ public class Expression {
 		Object value2 = operands.pop().getValue();
 		Object value1 = operands.pop().getValue();
 		Object result = ((BinaryFunction)function).evaluate(value1, value2);
-		Operand operand = null;
+		Operand operand;
 		if(result != null) {
 			operand = Operand.create(result.toString());
 		}
@@ -177,7 +176,7 @@ public class Expression {
 	protected Operand executeUnaryFunction(Function function) {
 		Object value1 = operands.pop().getValue();
 		Object result = ((UnaryFunction)function).evaluate(value1);
-		Operand operand = null;
+		Operand operand;
 		if(result != null) {
 			operand = Operand.create(result.toString());
 		}
@@ -315,11 +314,9 @@ public class Expression {
 	protected void processOperator(String operator) throws ExpressionException {
 		addOperand();
 		
-		if(operator.equals("-")) {
-			if(lastToken == TOKEN_OPERATOR) {
-				currentToken.append("-");
-				return;
-			}
+		if("-".equals(operator) && lastToken == TOKEN_OPERATOR) {
+			currentToken.append("-");
+			return;
 		}
 		addOperator(operator);
 	}
@@ -345,8 +342,8 @@ public class Expression {
 	private String expression;
 	private char lastChar = '\0';
 	private int lastToken = 0;
-	private Stack<Operand> operands = new Stack<>();
-	private Stack<Operator> operators = new Stack<>();
+	private Deque<Operand> operands = new ArrayDeque<>();
+	private Deque<Operator> operators = new ArrayDeque<>();
 	private Map<String,Object> variables = new HashMap<>();
 	private Map<String,Function> functions = new HashMap<>();
 }

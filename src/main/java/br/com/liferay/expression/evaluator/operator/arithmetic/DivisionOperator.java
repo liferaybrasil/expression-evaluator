@@ -15,7 +15,7 @@ public class DivisionOperator extends ArithmeticRelationalOperator {
 	private static final Map<Class<?>, BinaryInterface> map;
 	
 	static {
-		map = new HashMap<Class<?>, BinaryInterface>();
+		map = new HashMap<>();
 		map.put(Integer.class, (n1, n2) -> (Integer)n2 / (Integer)n1);
 		map.put(Long.class, (n1, n2) -> (Long)n2 / (Long)n1);
 		map.put(Float.class, (n1, n2) -> (Float)n2 / (Float)n1);

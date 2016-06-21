@@ -56,9 +56,9 @@ public abstract class Operator implements Comparable<Operator> {
 			return new NegationOperator(text);
 		case "(":
 			return new ParenthesisOperator(text);	
+		default:
+			return null;
 		}
-		
-		return null;
 	}
 	
 	@Override
