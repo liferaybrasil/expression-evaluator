@@ -35,6 +35,13 @@ public class OperatorTest {
 	}
 	
 	@Test
+	public void testEquals2() throws Exception {
+		Operator operator1 = Operator.create("-");
+		Assert.assertEquals(operator1, operator1);
+		Assert.assertEquals(operator1.hashCode(), operator1.hashCode());
+	}
+	
+	@Test
 	public void testNotEquals() throws Exception {
 		Operator operator1 = Operator.create("*");
 		Operator operator2 = Operator.create("/");
@@ -42,6 +49,19 @@ public class OperatorTest {
 		Assert.assertNotNull(operator2);
 		Assert.assertNotEquals(operator1, operator2);
 		Assert.assertNotEquals(operator1.hashCode(), operator2.hashCode());
+	}
+	
+	@Test
+	public void testNotEquals3() throws Exception {
+		Operator operator1 = Operator.create("*");
+		Operator operator2 = Operator.create("#");
+		Assert.assertNotEquals(operator1, operator2);
+	}
+	
+	@Test
+	public void testNotEquals2() throws Exception {
+		Operator operator1 = Operator.create("*");
+		Assert.assertNotEquals(operator1, null);
 	}
 	
 	@Test
