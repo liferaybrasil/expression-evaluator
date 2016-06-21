@@ -36,16 +36,7 @@ public class Expression {
 	
 	public Object evaluate() throws ExpressionException {
 		try {
-			for(int i = 0; i < expression.length(); i++) {
-				char character = expression.charAt(i);
-				if(character == '\"') {
-					i = processString(i, expression);
-					continue;
-				}
-				processCharacter(character);
-			}
-			
-			addOperand();
+			parseExpression();
 			
 			while(!operators.isEmpty()) {
 				Operator operator = operators.pop();
@@ -62,6 +53,30 @@ public class Expression {
 		catch(Exception ex) {
 			throw new ExpressionException("Invalid expression", ex);
 		}
+	}
+	
+	public boolean validate() {
+		try {
+			parseExpression();
+			
+			return true;
+		}
+		catch(ExpressionException ee) {
+			return false;
+		}
+	}
+
+	protected void parseExpression() throws ExpressionException {
+		for(int i = 0; i < expression.length(); i++) {
+			char character = expression.charAt(i);
+			if(character == '\"') {
+				i = processString(i, expression);
+				continue;
+			}
+			processCharacter(character);
+		}
+		
+		addOperand();
 	}
 	
 	protected void addOperand() {
