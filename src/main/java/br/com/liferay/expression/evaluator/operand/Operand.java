@@ -27,10 +27,10 @@ public abstract class Operand {
 			else if(!text.contains(".")) {
 				return new BigIntegerOperand(text);
 			}
-			else if(!text.contains("d") && NumberUtils.toFloat(text) != Float.POSITIVE_INFINITY) {
+			else if(!text.contains("d") && Float.compare(NumberUtils.toFloat(text),Float.POSITIVE_INFINITY) != 0) {
 				return new FloatOperand(text);
 			}
-			else if(NumberUtils.toDouble(text) != Float.POSITIVE_INFINITY) {
+			else if(Double.compare(NumberUtils.toDouble(text), Double.POSITIVE_INFINITY) != 0) {
 				return new DoubleOperand(text);
 			}
 			else if(text.contains(".")) {
